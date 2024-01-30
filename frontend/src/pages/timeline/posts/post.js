@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Post.sass";
 import { Avatar } from "@mui/material";
-import Modal from "@material-ui/core/Modal";
+import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";

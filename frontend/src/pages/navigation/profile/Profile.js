@@ -1,4 +1,4 @@
-import { Avatar } from "@material-ui/core";
+import { Avatar } from "@mui/material";
 import React, { useEffect } from "react";
 import "./Profile.sass";
 import { useAuth } from "../../../context/AuthProvider";

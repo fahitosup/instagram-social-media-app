@@ -1,6 +1,6 @@
 import React from "react";
-import Modal from "@material-ui/core/Modal";
-import { Avatar } from "@material-ui/core";
+import Modal from "@mui/material/Modal";
+import { Avatar } from "@mui/material";
 import Box from "@mui/material/Box";
 
 const PostModal = ({
