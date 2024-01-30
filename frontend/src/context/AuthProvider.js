@@ -3,6 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { useProfile } from "./ProfileContext";
 import { toast } from "react-toastify";
+import { base } from "../constants.js";
 
 const AuthContext = createContext();
 
@@ -33,7 +34,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       const body = { username: username, password: password };
-      const response = await fetch("http://localhost:3001/api/login/", {
+      const response = await fetch(`${base}/api/login/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,23 +74,6 @@ export const AuthProvider = ({ children }) => {
     */
   };
 
-  /* const isAuth = async () => {
-    try {
-      const response = await fetch("http://localhost:3001/verify", {
-        method: "GET",
-        headers: { jwtToken: localStorage.jwtToken },
-      });
-
-      const parseRes = await response.json();
-
-      if (parseRes === true) {
-        setIsAuthenticated(true);
-      }
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
- */
   const logout = (e) => {
     e.preventDefault();
     localStorage.removeItem("jwtToken");
@@ -101,7 +85,7 @@ export const AuthProvider = ({ children }) => {
     if (password != password2) {
       alert("Password's don't match!");
     } else {
-      const response = await fetch("http://localhost:3001/api/register", {
+      const response = await fetch(`${base}/api/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -196,10 +180,7 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated,
         login,
         logout,
-        //authTokens,
-        //user,
         registerUser,
-        // isAuth,
         // createProfile,
         //  updateProfile,
         username,

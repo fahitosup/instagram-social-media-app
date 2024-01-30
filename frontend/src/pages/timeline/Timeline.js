@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Timeline.sass";
 import Post from "./posts/post";
+import { base } from "../../constants";
 
 export const Timeline = () => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:3001/posts")
+      .get(`${base}/posts`)
       .then((res) => {
         const currentTimestamp = new Date();
         const baseURL = "http://localhost:3001/";
@@ -17,7 +18,7 @@ export const Timeline = () => {
           const timedifferenceMs = currentTimestamp - publishedTime;
           const updatedLink = entry.link.replace(
             /^public\\images\\/,
-            "http://localhost:3001/images/"
+            `${base}/images/`
           );
           const timedifferenceMins = Math.floor(timedifferenceMs / (1000 * 60));
           if (timedifferenceMins >= 1440) {

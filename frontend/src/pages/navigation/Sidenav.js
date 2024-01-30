@@ -10,6 +10,7 @@ import { useAuth } from "../../context/AuthProvider";
 import PostModal from "./PostModal";
 import SearchBar from "./search/SearchBar";
 import { useProfile } from "../../context/ProfileContext";
+import { base } from "../../constants.js";
 
 function Sidenav() {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -44,7 +45,7 @@ function Sidenav() {
     formData.append("time", timestamp.toISOString());
 
     axios
-      .post("http://localhost:3001/upload", formData)
+      .post(`${base}http://localhost:3001/upload`, formData)
       .then((res) => {
         console.log("Post created:", res.data);
         setModalOpen(false);

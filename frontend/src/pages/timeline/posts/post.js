@@ -18,7 +18,7 @@ const Post = ({ id, user, caption, link, likes, time }) => {
   const [showComment, setshowComments] = useState(false);
 
   const toggler = () => {
-    if (liked == false) {
+    /* if (liked == false) {
       setLiked(true);
       fetch(`http://localhost:8000/posts/${id}/`, {
         method: "PATCH",
@@ -31,11 +31,11 @@ const Post = ({ id, user, caption, link, likes, time }) => {
       })
         .then((response) => response.json)
         .then(setLikes(likes_loc + 1));
-    }
+    } */
   };
 
   const liker = () => {
-    if (liked) {
+    /* if (liked) {
       setLiked(false);
       fetch(`http://localhost:8000/posts/${id}/`, {
         method: "PATCH",
@@ -61,7 +61,7 @@ const Post = ({ id, user, caption, link, likes, time }) => {
       })
         .then((response) => response.json)
         .then(setLikes(likes_loc + 1));
-    }
+    } */
   };
 
   const comment = () => {
