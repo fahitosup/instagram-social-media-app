@@ -1,7 +1,7 @@
 const { Pool } = require("pg");
 require("dotenv").config();
 
-import { dev } from "../constants.js";
+const { dev } = require("../constants.js");
 
 const pool = dev
   ? new Pool({
