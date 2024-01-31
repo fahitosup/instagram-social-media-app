@@ -45,7 +45,7 @@ function Sidenav() {
     formData.append("time", timestamp.toISOString());
 
     axios
-      .post(`${base}http://localhost:3001/upload`, formData)
+      .post(`${base}/upload`, formData)
       .then((res) => {
         console.log("Post created:", res.data);
         setModalOpen(false);

@@ -1,3 +1,5 @@
-const dev = true;
+const dev = false;
 
-export const base = dev ? "http://localhost:3001" : "test.com";
+export const base = dev
+  ? "http://localhost:3001"
+  : "https://instagram-backend-71q1.onrender.com";

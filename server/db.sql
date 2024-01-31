@@ -9,7 +9,6 @@ CREATE TABLE posts (
 
 
 
-CREATE DATABASE auth;
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(100),
