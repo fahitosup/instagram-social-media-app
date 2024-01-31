@@ -12,7 +12,7 @@ export const Timeline = () => {
       .get(`${base}/posts`)
       .then((res) => {
         const currentTimestamp = new Date();
-        const baseURL = "http://localhost:3001/";
+        const baseURL = base;
         const modifiedData = res.data.data.posts.map((entry) => {
           const publishedTime = new Date(entry.time);
           const timedifferenceMs = currentTimestamp - publishedTime;

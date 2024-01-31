@@ -1,1 +1,1 @@
-const dev = false;
+const dev = true;
