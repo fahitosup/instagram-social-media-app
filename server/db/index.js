@@ -1,7 +1,7 @@
 const { Pool } = require("pg");
 require("dotenv").config();
 
-import { dev } from "../../frontend/src/constants.js";
+import { dev } from "../constants.js";
 
 const pool = dev
   ? new Pool({
