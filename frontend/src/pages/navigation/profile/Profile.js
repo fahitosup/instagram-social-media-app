@@ -34,7 +34,7 @@ const Profile = () => {
         </div>
       </div>
       <div className="profile-posts">
-        <div>POSTS</div>
+        <div>Posts</div>
       </div>
     </div>
   );

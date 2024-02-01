@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { useProfile } from "./ProfileContext";
@@ -10,11 +10,6 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { profileMade } = useProfile;
-  /*   const [authTokens, setAuthTokens] = useState(() =>
-    localStorage.getItem("jwtToken")
-      ? JSON.parse(localStorage.getItem("jwtToken"))
-      : null
-  ); */
 
   const [username, setUsername] = useState(() =>
     localStorage.getItem("jwtToken")
@@ -28,6 +23,8 @@ export const AuthProvider = ({ children }) => {
   );
  */
   const [results, setResults] = useState([]);
+
+  const [error, setError] = useState();
 
   const navigate = useNavigate();
 
@@ -53,25 +50,6 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.log(err.message);
     }
-
-    /*
-    let data = await response.json();
-    if (response.ok) {
-      localStorage.setItem("authTokens", JSON.stringify(data));
-      setAuthTokens(data);
-      setUser(jwtDecode(data.access));
-      setIsAuthenticated(true);
-      setUsername(username);
-      if (profileMade) {
-        navigate("");
-      } else {
-        navigate("profile");
-      }
-    } else {
-      setUsername("");
-      alert("Invalid credentials, please try again!");
-    }
-    */
   };
 
   const logout = (e) => {
@@ -99,10 +77,16 @@ export const AuthProvider = ({ children }) => {
 
       const parseRes = await response.json();
       localStorage.setItem("jwtToken", parseRes.jwtToken);
+
+      if (response.ok) {
+        navigate("login");
+      } else {
+        setError(parseRes.error);
+      }
     }
   };
 
-  /*  const createProfile = async (full_name, bio, image) => {
+  const createProfile = async (full_name, bio, image) => {
     const formData = new FormData();
 
     formData.append("full_name", full_name);
@@ -111,12 +95,12 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const response = await fetch(
-        "http://localhost:8000S/api/register/create-profile",
+        "http://localhost:3001/api/create-profile/",
         {
           method: "POST",
           body: formData,
           headers: {
-            Authorization: `Bearer ${authTokens.access}`,
+            jwtToken: localStorage.getItem("jwtToken"),
           },
         }
       );
@@ -130,8 +114,8 @@ export const AuthProvider = ({ children }) => {
       console.error("Error creating profile:", error);
     }
   };
- */
-  /*  const updateProfile = async (full_name, bio, image, pk) => {
+
+  const updateProfile = async (full_name, bio, image, pk) => {
     const formData = new FormData();
 
     formData.append("full_name", full_name);
@@ -147,9 +131,6 @@ export const AuthProvider = ({ children }) => {
         {
           method: "PUT",
           body: formData,
-          headers: {
-            Authorization: `Bearer ${authTokens.access}`,
-          },
         }
       );
       if (response.ok) {
@@ -162,7 +143,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error("Error updating profile:", error);
     }
-  }; */
+  };
   /*  const fetchData = (value) => {
     fetch("http://localhost:8000/api/users")
       .then((response) => response.json())
@@ -178,14 +159,16 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         isAuthenticated,
+        setIsAuthenticated,
         login,
         logout,
         registerUser,
-        // createProfile,
+        createProfile,
         //  updateProfile,
         username,
-        // fetchData,
+
         results,
+        error,
       }}
     >
       {children}

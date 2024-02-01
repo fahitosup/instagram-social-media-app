@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useContext, createContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Register.sass";
 import instagramlogo from "../../assets/login/instalogo-black.png";
 
 import { Avatar } from "@mui/material";
-import { AuthProvider, useAuth } from "../../context/AuthProvider";
+import { useAuth } from "../../context/AuthProvider";
 import { useProfile } from "../../context/ProfileContext";
 
 const CreateProfile = ({ children }) => {
-  const { createProfile, updateProfile, authTokens, username } = useAuth();
+  const { createProfile, updateProfile, username } = useAuth();
   const {
     profilePicURL,
     setProfilePicURL,
@@ -26,7 +26,7 @@ const CreateProfile = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (authTokens?.access) {
+    /*  if (authTokens?.access) {
       fetch("http://localhost:8000/api/user", {
         method: "GET",
         headers: {
@@ -50,12 +50,11 @@ const CreateProfile = ({ children }) => {
         });
     } else {
       navigate("/login");
-    }
+    } */
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (profileMade) {
       updateProfile(fullName, bio, profilePic, pk);
     } else {
@@ -97,8 +96,7 @@ const CreateProfile = ({ children }) => {
                     </div>
                   ) : (
                     <div>
-                      Welcome {username}!, show yourself and tell us a bit more
-                      about yourself!
+                      Welcome {username}!, tell us a bit more about yourself!
                     </div>
                   )}
                 </div>

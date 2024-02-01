@@ -23,11 +23,19 @@ const storage = multer.diskStorage({
   },
 });
 
+const profileStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    return cb(null, "./public/profile_pictures");
+  },
+  filename: function (req, file, cb) {
+    return cb(null, `${Date.now()}_${file.originalname}`);
+  },
+});
+
 const upload = multer({ storage });
+const profileUpload = multer({ profileStorage });
 
 app.post("/upload", upload.single("file"), async (req, res) => {
-  console.log(req.body);
-
   try {
     const posts = await db.query(
       "INSERT INTO posts (user_id, caption, link, time) values ($1, $2, $3, $4)",
@@ -41,18 +49,54 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   }
 });
 
-app.get("/posts", async (req, res) => {
-  try {
-    const posts = await db.query("select * from posts");
-    res.status(200).json({
-      data: {
-        posts: posts.rows,
-      },
-    });
-  } catch (err) {
-    console.log(err);
+app.post(
+  "/upload/profile-picture",
+  profileUpload.single("file"),
+  async (req, res) => {
+    try {
+      const posts = await db.query(
+        "INSERT INTO posts (user_id, caption, link, time) values ($1, $2, $3, $4)",
+        [req.body.userId, req.body.caption, req.file.path, req.body.time]
+      );
+      res.status(201).json({
+        message: "Post uploaded sucessfully.",
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }
-});
+);
+
+app.post(
+  "/api/create-profile",
+  authorize,
+  upload.single("image"),
+  async (req, res) => {
+    const { full_name, bio } = req.body;
+    // Assuming the authorize middleware adds the user ID to req.user
+    const user_id = req.user.id; // Adjust based on how user ID is stored in req.user
+    const profile_picture = req.file
+      ? req.file.path.replace("public", "")
+      : null;
+
+    try {
+      const newProfile = await db.query(
+        "INSERT INTO profile (username, full_name, bio, profile_picture) VALUES ($1, $2, $3, $4) RETURNING *",
+        [user_id, full_name, bio, profile_picture]
+      );
+      res.status(201).json({
+        message: "Profile created successfully.",
+        profile: newProfile.rows[0],
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({
+        message: "Failed to create profile",
+        error: err.message,
+      });
+    }
+  }
+);
 
 // Authen and Author procedures
 
@@ -108,6 +152,31 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+app.get("/posts", async (req, res) => {
+  try {
+    const posts = await db.query("select * from posts");
+    res.status(200).json({
+      data: {
+        posts: posts.rows,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.get("/usernames", async (req, res) => {
+  try {
+    const usernames = await db.query("select username from users");
+    res.status(200).json({
+      data: {
+        usernames: usernames.rows,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
 app.get("/verify", authorize, (req, res) => {
   try {
     res.json(true);

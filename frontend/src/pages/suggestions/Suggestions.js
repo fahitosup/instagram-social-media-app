@@ -1,73 +1,40 @@
 import { Avatar } from "@mui/material";
 import "./Suggestions.sass";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { base } from "../../constants.js";
 
 const Suggestions = () => {
+  const [usernames, setUsernames] = useState([]);
+  useEffect(() => {
+    const getUsernames = async () => {
+      const response = await axios.get(`${base}/usernames`);
+      if (response) {
+        setUsernames(response.data.data.usernames);
+      }
+    };
+    getUsernames();
+  }, []);
+
   return (
     <div className="suggestions">
       <div className="suggestions_title">Suggestions for you</div>
       <div className="suggestions_usernames">
-        <div className="suggestion_username">
-          <div className="username_left">
-            <span className="avatar">
-              <Avatar>F</Avatar>
-            </span>
-            <div className="username_info">
-              <span className="username">fahitosup</span>
-              <span className="relation">New to Instagram</span>
+        {usernames.map((user, index) => (
+          <div className="suggestion_username">
+            <div className="username_left">
+              <span className="avatar">
+                <Avatar>{user.username[0]}</Avatar>
+              </span>
+              <div className="username_info">
+                <span className="username">{user.username}</span>
+                <span className="relation">New to Instagram</span>
+              </div>
             </div>
+            <button className="follow_button">Follow</button>
           </div>
-          <button className="follow_button">Follow</button>
-        </div>
-        <div className="suggestion_username">
-          <div className="username_left">
-            <span className="avatar">
-              <Avatar>F</Avatar>
-            </span>
-            <div className="username_info">
-              <span className="username">fahitosup</span>
-              <span className="relation">New to Instagram</span>
-            </div>
-          </div>
-          <button className="follow_button">Follow </button>
-        </div>
-        <div className="suggestion_username">
-          <div className="username_left">
-            <span className="avatar">
-              <Avatar>F</Avatar>
-            </span>
-            <div className="username_info">
-              <span className="username">fahitosup</span>
-              <span className="relation">New to Instagram</span>
-            </div>
-          </div>
-          <button className="follow_button">Follow</button>
-        </div>
-        <div className="suggestion_username">
-          <div className="username_left">
-            <span className="avatar">
-              <Avatar>F</Avatar>
-            </span>
-            <div className="username_info">
-              <span className="username">fahitosup</span>
-              <span className="relation">New to Instagram</span>
-            </div>
-          </div>
-          <button className="follow_button">Follow</button>
-        </div>
-        <div className="suggestion_username">
-          <div className="username_left">
-            <span className="avatar">
-              <Avatar>F</Avatar>
-            </span>
-            <div className="username_info">
-              <span className="username">fahitosup</span>
-              <span className="relation">New to Instagram</span>
-            </div>
-          </div>
-          <button className="follow_button">Follow</button>
-        </div>
+        ))}
       </div>
     </div>
   );

@@ -12,8 +12,6 @@ const Homepage = () => {
   const { createProfile, updateProfile, isAuthenticated, isAuth } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {}, []);
-
   return (
     <div className="homepage">
       <div className="homepage__nav">
