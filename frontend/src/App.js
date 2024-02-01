@@ -47,36 +47,6 @@ function App() {
     checkAuth();
   }, []);
 
-  /* 
-  useEffect(() => {
-    if (authTokens?.access) {
-      fetch("http://localhost:8000/api/user", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${authTokens?.access}`,
-        },
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          console.log(response);
-          if (response) {
-            if (response.profile) {
-              setProfileMade(true);
-              setBio(response.profile.bio);
-              setfullName(response.profile.full_name);
-              setProfilePicURL(response.profile.image);
-              setpk(response.profile.id);
-            } else {
-              setProfileMade(false);
-            }
-          }
-        });
-    } else {
-      navigate("/login");
-    }
-  }, []);
-  */
-
   return (
     <div className="App">
       <Routes>

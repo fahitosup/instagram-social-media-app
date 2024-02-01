@@ -115,7 +115,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const updateProfile = async (full_name, bio, image, pk) => {
+  /* const updateProfile = async (full_name, bio, image, pk) => {
     const formData = new FormData();
 
     formData.append("full_name", full_name);
@@ -143,16 +143,6 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error("Error updating profile:", error);
     }
-  };
-  /*  const fetchData = (value) => {
-    fetch("http://localhost:8000/api/users")
-      .then((response) => response.json())
-      .then((json) => {
-        const results1 = json.filter((user) => {
-          return value && user.username.toLowerCase().includes(value);
-        });
-        setResults(results1);
-      });
   }; */
 
   return (
