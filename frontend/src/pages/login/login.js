@@ -10,12 +10,20 @@ import instagramlogo from "../../assets/login/instalogo-black.png";
 import "./login.sass";
 
 const Login = () => {
+  //TO-DO improve animations
+  // Password visibilty
+  const navigate = useNavigate();
   const [state, setState] = useState({
     bars: [bar1, bar2, bar3],
     activeImageIndex: 0,
   });
 
+  const { isAuthenticated, user, login } = useAuth();
+
   useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
     const intervalId = setInterval(() => {
       let newActiveIndex =
         state.activeImageIndex === 2 ? 0 : state.activeImageIndex + 1;
@@ -31,8 +39,6 @@ const Login = () => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { isAuthenticated, user, login } = useAuth();
-  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -45,12 +51,6 @@ const Login = () => {
   const handleUserNameChange = (event) => {
     setUsername(event.target.value);
   };
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("");
-    }
-  }, []);
 
   return (
     <div id="login">

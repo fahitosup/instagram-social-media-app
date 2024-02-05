@@ -9,42 +9,55 @@ import Login from "./pages/login/login";
 import Register from "./pages/register/Register";
 import CreateProfile from "./pages/register/CreateProfile";
 import Profile from "./pages/navigation/profile/Profile";
+import { jwtDecode } from "jwt-decode";
 import { useProfile } from "./context/ProfileContext";
 import { useAuth } from "./context/AuthProvider";
 import axios from "axios";
 import { base } from "./constants";
 
 function App() {
-  const { isAuthenticated, setIsAutheticated, username } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, username, setUsername } =
+    useAuth();
+  const { setProfileMade, setBio, setfullName } = useProfile();
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    /* if (typeof username != "string") {
-      navigate("login");
-    } */
     const checkAuth = async () => {
-      try {
-        const response = await axios.get(`${base}/verify`, {
-          headers: {
-            jwtToken: localStorage.getItem("jwtToken"), // Adjust if you store the token differently
-          },
-        });
+      const jwtToken = localStorage.getItem("jwtToken");
 
-        if (response.status === 200) {
-          // Token is valid, user is authenticated
-          setIsAutheticated(true); // Uncomment or use similar based on your auth context
+      if (jwtToken) {
+        setUsername(jwtDecode(localStorage.getItem("jwtToken")).user.id);
+        try {
+          const response = await axios.get(`${base}/verify`, {
+            headers: {
+              jwtToken: jwtToken, // Adjust if you store the token differently
+            },
+          });
+          setIsAuthenticated(true);
+        } catch (err) {
+          navigate("login");
         }
-      } catch (error) {
-        // Handle 401 Unauthorized or other errors
-        if (error.response && error.response.status === 401) {
-          // setIsAuthenticated(false); // Uncomment or use similar based on your auth context
-          navigate("/login");
-        }
+      } else {
+        navigate("login");
       }
     };
-
+    const checkProfile = async () => {
+      try {
+        const response = await axios.get(`${base}/api/check-profile`, {
+          headers: {
+            jwtToken: localStorage.getItem("jwtToken"),
+          },
+        });
+        setProfileMade(true);
+        setfullName(response.data.profile.full_name);
+        setBio(response.data.profile.bio);
+      } catch (err) {
+        console.log(err);
+      }
+    };
     checkAuth();
+    checkProfile();
   }, []);
 
   return (

@@ -7,9 +7,12 @@ import Suggestions from "../pages/suggestions/Suggestions";
 import { useAuth } from "../context/AuthProvider";
 import { CreateProfile } from "../pages/register/CreateProfile";
 import { useProfile } from "../context/ProfileContext";
+import axios from "axios";
+import { base } from "../constants";
 
 const Homepage = () => {
   const { createProfile, updateProfile, isAuthenticated, isAuth } = useAuth();
+  const { setBio, setProfileMade, setfullName, profile } = useProfile();
   const navigate = useNavigate();
 
   return (

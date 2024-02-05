@@ -6,9 +6,11 @@ import instagramlogo from "../../assets/login/instalogo-black.png";
 import { Avatar } from "@mui/material";
 import { useAuth } from "../../context/AuthProvider";
 import { useProfile } from "../../context/ProfileContext";
+import { base } from "../../constants";
+import axios from "axios";
 
 const CreateProfile = ({ children }) => {
-  const { createProfile, updateProfile, username } = useAuth();
+  const { isAuthenticated, createProfile, updateProfile, username } = useAuth();
   const {
     profilePicURL,
     setProfilePicURL,
@@ -23,7 +25,12 @@ const CreateProfile = ({ children }) => {
     bio,
     setBio,
   } = useProfile();
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log(profileMade);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -43,6 +50,7 @@ const CreateProfile = ({ children }) => {
               className="sidenav__logo"
               src={instagramlogo}
               alt="Instagram Logo"
+              onClick={() => navigate("/")}
             />
             <form onSubmit={handleSubmit}>
               <div className="form-group">

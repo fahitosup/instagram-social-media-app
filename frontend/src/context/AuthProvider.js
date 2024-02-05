@@ -4,12 +4,27 @@ import { useNavigate } from "react-router-dom";
 import { useProfile } from "./ProfileContext";
 import { toast } from "react-toastify";
 import { base } from "../constants.js";
+import axios from "axios";
+import { ClickAwayListener } from "@mui/material";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { profileMade } = useProfile;
+  const {
+    profilePicURL,
+    setProfilePicURL,
+    profilePic,
+    setProfilePic,
+    pk,
+    setpk,
+    profileMade,
+    setProfileMade,
+    fullName,
+    setfullName,
+    bio,
+    setBio,
+  } = useProfile();
 
   const [username, setUsername] = useState(() =>
     localStorage.getItem("jwtToken")
@@ -44,8 +59,7 @@ export const AuthProvider = ({ children }) => {
       if (parseRes.jwtToken) {
         setIsAuthenticated(true);
         localStorage.setItem("jwtToken", parseRes.jwtToken);
-        toast.success("Logged in!");
-        navigate("");
+        navigate("/");
       }
     } catch (err) {
       console.log(err.message);
@@ -107,15 +121,14 @@ export const AuthProvider = ({ children }) => {
       if (response.ok) {
         const data = await response.json();
         console.log("Profile created:", data);
-      } else {
-        console.error("Failed to create profile!");
+        setProfileMade(true);
       }
     } catch (error) {
       console.error("Error creating profile:", error);
     }
   };
 
-  /* const updateProfile = async (full_name, bio, image, pk) => {
+  const updateProfile = async (full_name, bio, image) => {
     const formData = new FormData();
 
     formData.append("full_name", full_name);
@@ -126,24 +139,15 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/register/update-profile/${pk}/`,
-        {
-          method: "PUT",
-          body: formData,
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Profile updated:", data);
-        navigate("/");
-      } else {
-        console.error("Failed to update profile!");
-      }
-    } catch (error) {
-      console.error("Error updating profile:", error);
+      const response = await axios.put(`${base}/api/update-profile`, formData, {
+        headers: {
+          jwtToken: localStorage.getItem("jwtToken"),
+        },
+      });
+    } catch (err) {
+      console.log(err);
     }
-  }; */
+  };
 
   return (
     <AuthContext.Provider
@@ -154,8 +158,9 @@ export const AuthProvider = ({ children }) => {
         logout,
         registerUser,
         createProfile,
-        //  updateProfile,
+        updateProfile,
         username,
+        setUsername,
 
         results,
         error,

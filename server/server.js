@@ -49,7 +49,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   }
 });
 
-app.post(
+/* app.post(
   "/upload/profile-picture",
   profileUpload.single("file"),
   async (req, res) => {
@@ -65,7 +65,7 @@ app.post(
       console.log(err);
     }
   }
-);
+); */
 
 app.post(
   "/api/create-profile",
@@ -74,7 +74,7 @@ app.post(
   async (req, res) => {
     const { full_name, bio } = req.body;
     // Assuming the authorize middleware adds the user ID to req.user
-    const user_id = req.user.id; // Adjust based on how user ID is stored in req.user
+    const user_id = req.user.id;
     const profile_picture = req.file
       ? req.file.path.replace("public", "")
       : null;
@@ -92,6 +92,99 @@ app.post(
       console.error(err);
       res.status(500).json({
         message: "Failed to create profile",
+        error: err.message,
+      });
+    }
+  }
+);
+
+app.get("/api/check-profile", authorize, async (req, res) => {
+  // Assuming the authorize middleware adds the user ID to req.user
+  const user_id = req.user.id;
+  try {
+    const response = await db.query(
+      "SELECT * FROM profile WHERE username = $1",
+      [user_id]
+    );
+
+    if (response.rows.length > 0) {
+      res.json({
+        hasProfile: true,
+        profile: response.rows[0],
+      });
+    } else {
+      res.json({
+        hasProfile: false,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+});
+
+app.put(
+  "/api/update-profile",
+  authorize,
+  upload.single("image"),
+  async (req, res) => {
+    const { full_name, bio } = req.body;
+    // Assuming the authorize middleware adds the user ID to req.user
+    const user_id = req.user.id;
+    const profile_picture = req.file
+      ? req.file.path.replace("public", "")
+      : null;
+
+    try {
+      // Update profile only if full_name or bio or profile_picture is provided
+      const updateQuery = [];
+      const queryParams = [];
+
+      if (full_name) {
+        queryParams.push(full_name);
+        updateQuery.push(`full_name = $${queryParams.length}`);
+      }
+
+      if (bio) {
+        queryParams.push(bio);
+        updateQuery.push(`bio = $${queryParams.length}`);
+      }
+
+      if (profile_picture) {
+        queryParams.push(profile_picture);
+        updateQuery.push(`profile_picture = $${queryParams.length}`);
+      }
+
+      queryParams.push(user_id); // Always include user_id as the last parameter for the WHERE clause
+
+      if (queryParams.length > 1) {
+        // Check if there's anything to update
+        const updateStatement = `
+        UPDATE profile
+        SET ${updateQuery.join(", ")}
+        WHERE username = $${queryParams.length}
+        RETURNING *;
+      `;
+
+        const updatedProfile = await db.query(updateStatement, queryParams);
+
+        if (updatedProfile.rows.length > 0) {
+          res.json({
+            message: "Profile updated successfully.",
+            profile: updatedProfile.rows[0],
+          });
+        } else {
+          res.status(404).json({ message: "Profile not found." });
+        }
+      } else {
+        res.status(400).json({ message: "No update parameters provided." });
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({
+        message: "Failed to update profile",
         error: err.message,
       });
     }
