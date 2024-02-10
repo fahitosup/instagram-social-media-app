@@ -28,7 +28,7 @@ DEV_DB_PORT = 5432
 ## Running the application
 
 1. Run the server:
-   Navigate to the `server` directory by `cd server`. `npm install` to install all necessary packages and `npm start` to run the server.
+   Navigate to the `server` directory by `cd server`. Use `npm install` to install all necessary packages and then use `npm start` to run the server.
 2. Start the frontend:
-   Navigate to the `frontend` directory by `cd frontend`, `npm install` to install all necessary packages and `npm start` to start the frontend. The website will then run on `http://localhost:3000`. Sign up to create an account and subsequentally log in.
+   Navigate to the `frontend` directory by `cd frontend`, `npm install` to install all necessary packages and then use `npm start` to start the frontend. The website will then run on `http://localhost:3000`. Sign up to create an account and then log in.
 
