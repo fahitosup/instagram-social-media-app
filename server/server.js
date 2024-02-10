@@ -10,7 +10,14 @@ const jwtGenerator = require("./utils/jwtgen");
 
 const app = express();
 
-app.use(cors());
+const isDevMode = process.env.NODE_ENV == "development";
+
+const corsOptions = {
+  origin: isDevMode
+    ? "http://localhost:3000"
+    : "https://instagram-social-media-app.vercel.app",
+};
+app.use(cors(corsOptions));
 app.use(express.static("public"));
 app.use(express.json());
 
@@ -228,7 +235,11 @@ app.post("/api/login", async (req, res) => {
     ]);
 
     if (user.rows.length === 0) {
-      return res.status(401).json("You've entered invalid credentials.");
+      return res
+        .status(401)
+        .json(
+          "Sorry, your password was incorrect. Please double-check your password."
+        );
     }
 
     const validPassword = await bcrypt.compare(password, user.rows[0].password);
@@ -276,6 +287,74 @@ app.get("/verify", authorize, (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
+  }
+});
+
+app.get("/api/results", async (req, res) => {
+  try {
+    const results = await db.query("select * from users");
+    res.json({
+      data: {
+        results: results.rows[0],
+      },
+    });
+  } catch (err) {
+    console.err(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+app.get("/api/isFollowing/:userid", authorize, async (req, res) => {
+  const follower_username = req.user.id; // The ID of the current, logged-in user (set by your authentication middleware)
+  const following_username = req.params.userid; // The ID of the user whose follow status you're checking
+
+  try {
+    const result = await db.query(
+      "SELECT COUNT(*) FROM followers WHERE follower_username = $1 AND following_username = $2",
+      [follower_username, following_username]
+    );
+
+    const isFollowing = result.rows[0].count > 0;
+    res.json({ isFollowing });
+  } catch (error) {
+    console.error("Error checking follow status:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.post("/api/follow", authorize, async (req, res) => {
+  const follower_username = req.user.id; // Assuming you have a way to identify the logged-in user
+  const { following_username } = req.body;
+
+  try {
+    const result = await db.query(
+      "INSERT INTO followers (follower_username, following_username) VALUES ($1, $2) ON CONFLICT DO NOTHING",
+      [follower_username, following_username]
+    );
+    res.status(201).json({ message: "Followed successfully" });
+  } catch (error) {
+    console.error("Error following user:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.delete("/api/unfollow", authorize, async (req, res) => {
+  const follower_username = req.user.id; // Logged-in user's ID
+  const { following_username } = req.body; // ID of the user to unfollow
+
+  try {
+    const result = await db.query(
+      "DELETE FROM followers WHERE follower_username = $1 AND following_username = $2",
+      [follower_username, following_username]
+    );
+    if (result.rowCount > 0) {
+      res.json({ message: "Unfollowed successfully" });
+    } else {
+      res.status(404).json({ message: "Follow relationship not found" });
+    }
+  } catch (error) {
+    console.error("Error unfollowing user:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

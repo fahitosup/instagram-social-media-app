@@ -2,10 +2,12 @@ import { Avatar } from "@mui/material";
 import "./Suggestions.sass";
 
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { base } from "../../constants.js";
 
 const Suggestions = () => {
+  const navigate = useNavigate();
   const [usernames, setUsernames] = useState([]);
   useEffect(() => {
     const getUsernames = async () => {
@@ -24,11 +26,19 @@ const Suggestions = () => {
         {usernames.map((user, index) => (
           <div className="suggestion_username">
             <div className="username_left">
-              <span className="avatar">
+              <span
+                className="avatar"
+                onClick={() => navigate(`/${user.username}`)}
+              >
                 <Avatar>{user.username[0]}</Avatar>
               </span>
               <div className="username_info">
-                <span className="username">{user.username}</span>
+                <span
+                  className="username"
+                  onClick={() => navigate(`/${user.username}`)}
+                >
+                  {user.username}
+                </span>
                 <span className="relation">New to Instagram</span>
               </div>
             </div>

@@ -1,7 +1,7 @@
 const { Pool } = require("pg");
 require("dotenv").config();
 
-const { dev } = false;
+const dev = process.env.NODE_ENV === "development" ? true : false;
 
 const pool = dev
   ? new Pool({

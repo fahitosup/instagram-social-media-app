@@ -27,13 +27,13 @@ function App() {
       const jwtToken = localStorage.getItem("jwtToken");
 
       if (jwtToken) {
-        setUsername(jwtDecode(localStorage.getItem("jwtToken")).user.id);
         try {
           const response = await axios.get(`${base}/verify`, {
             headers: {
               jwtToken: jwtToken, // Adjust if you store the token differently
             },
           });
+          setUsername(jwtDecode(localStorage.getItem("jwtToken")).user.id);
           setIsAuthenticated(true);
         } catch (err) {
           navigate("login");
@@ -49,9 +49,11 @@ function App() {
             jwtToken: localStorage.getItem("jwtToken"),
           },
         });
-        setProfileMade(true);
-        setfullName(response.data.profile.full_name);
-        setBio(response.data.profile.bio);
+        if (response.data.hasProfile) {
+          setProfileMade(true);
+          setfullName(response.data.profile.full_name);
+          setBio(response.data.profile.bio);
+        }
       } catch (err) {
         console.log(err);
       }

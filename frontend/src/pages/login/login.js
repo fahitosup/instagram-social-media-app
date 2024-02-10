@@ -39,10 +39,15 @@ const Login = () => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    login(username, password);
+    const response = await login(username, password);
+    if (response) {
+      setError(response);
+      console.log(response);
+    }
   };
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
@@ -96,6 +101,7 @@ const Login = () => {
                 <button type="submit" className="btn btn-primary">
                   Log in
                 </button>
+                {error && <p className="error-message">{error}</p>}
               </div>
             </form>
           </div>

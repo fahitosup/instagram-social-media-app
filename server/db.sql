@@ -26,3 +26,19 @@ CREATE TABLE profile (
         REFERENCES users(username)
         ON DELETE CASCADE
 );
+
+CREATE TABLE followers (
+    id SERIAL PRIMARY KEY,
+    follower_username VARCHAR(50) NOT NULL,
+    following_username VARCHAR(50) NOT NULL,
+    CONSTRAINT fk_follower
+        FOREIGN KEY(follower_username)
+        REFERENCES users(username)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_following
+        FOREIGN KEY(following_username)
+        REFERENCES users(username)
+        ON DELETE CASCADE,
+    UNIQUE (follower_username, following_username)
+);
+

@@ -1,15 +1,38 @@
 import { Avatar } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./Profile.sass";
 import { useAuth } from "../../../context/AuthProvider";
 import { useNavigate, useParams } from "react-router-dom";
 import { useProfile } from "../../../context/ProfileContext";
+import Sidenav from "../Sidenav";
+import axios from "axios";
+import { base } from "../../../constants";
 
 const Profile = () => {
   const { username } = useAuth();
   const { userid } = useParams();
-  const { fullName, profilePicURL, bio } = useProfile();
+  const { fullName, profilePicURL, bio, follow, unfollow } = useProfile();
+  const [isFollowing, setIsFollowing] = useState();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkFollowStatus = async () => {
+      try {
+        // Assuming you have a function to make GET requests to your API
+        const response = await axios.get(`${base}/api/isFollowing/${userid}`, {
+          headers: {
+            jwtToken: localStorage.getItem("jwtToken"),
+          },
+        });
+
+        setIsFollowing(response.data.isFollowing);
+      } catch (error) {
+        console.error("Failed to fetch follow status", error);
+      }
+    };
+
+    checkFollowStatus();
+  }, []);
 
   return (
     <div className="profile-container">
@@ -20,8 +43,22 @@ const Profile = () => {
             <div>{userid}</div>{" "}
             {username == userid ? (
               <button onClick={() => navigate("/profile")}>Edit profile</button>
+            ) : isFollowing ? (
+              <button
+                onClick={() => {
+                  unfollow(userid);
+                }}
+              >
+                Unfollow
+              </button>
             ) : (
-              <button>Follow</button>
+              <button
+                onClick={() => {
+                  follow(userid);
+                }}
+              >
+                Follow
+              </button>
             )}
           </span>
           <div className="follow-info">
@@ -34,7 +71,7 @@ const Profile = () => {
         </div>
       </div>
       <div className="profile-posts">
-        <div>Posts</div>
+        <div>POSTS</div>
       </div>
     </div>
   );

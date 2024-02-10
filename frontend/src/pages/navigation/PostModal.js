@@ -2,6 +2,7 @@ import React from "react";
 import Modal from "@mui/material/Modal";
 import { Avatar } from "@mui/material";
 import Box from "@mui/material/Box";
+import { useAuth } from "../../context/AuthProvider";
 
 const PostModal = ({
   isOpen,
@@ -14,6 +15,7 @@ const PostModal = ({
   caption,
   divVisible,
 }) => {
+  const { username } = useAuth();
   return (
     <Modal
       open={isOpen}
@@ -61,7 +63,7 @@ const PostModal = ({
             className={`caption-holder ${divVisible ? "visible" : "hidden"}`}
           >
             <div style={{ display: "block" }}>
-              <Avatar>F</Avatar> <h4>fahitosup</h4>
+              <Avatar>F</Avatar> <h4>{username}</h4>
               <input
                 onChange={handleCaptionChange}
                 placeholder="Write a caption"

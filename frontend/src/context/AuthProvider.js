@@ -58,8 +58,12 @@ export const AuthProvider = ({ children }) => {
       const parseRes = await response.json();
       if (parseRes.jwtToken) {
         setIsAuthenticated(true);
+        setUsername(jwtDecode(parseRes.jwtToken).user.id);
         localStorage.setItem("jwtToken", parseRes.jwtToken);
         navigate("/");
+        return null;
+      } else {
+        return parseRes;
       }
     } catch (err) {
       console.log(err.message);
@@ -161,7 +165,6 @@ export const AuthProvider = ({ children }) => {
         updateProfile,
         username,
         setUsername,
-
         results,
         error,
       }}

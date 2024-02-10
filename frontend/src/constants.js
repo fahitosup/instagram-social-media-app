@@ -1,4 +1,4 @@
-export const dev = false;
+export const dev = true;
 
 export const base = dev
   ? "http://localhost:3001"
