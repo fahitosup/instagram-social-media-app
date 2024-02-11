@@ -23,7 +23,6 @@ function Sidenav() {
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [isVisible, setVisible] = useState(false);
-  const [userId, setUserId] = useState("fahitosup");
   const [caption, setcaption] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
@@ -38,7 +37,7 @@ function Sidenav() {
   const handleFormSubmit = () => {
     const timestamp = new Date();
     const formData = new FormData();
-    formData.append("userId", userId);
+    formData.append("userId", username);
     formData.append("caption", caption);
     formData.append("file", selectedFile);
     formData.append("likes", likes);

@@ -9,7 +9,11 @@ export const Timeline = () => {
 
   useEffect(() => {
     axios
-      .get(`${base}/posts`)
+      .get(`${base}/api/timeline`, {
+        headers: {
+          jwtToken: localStorage.getItem("jwtToken"),
+        },
+      })
       .then((res) => {
         const currentTimestamp = new Date();
         const baseURL = base;

@@ -56,24 +56,6 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   }
 });
 
-/* app.post(
-  "/upload/profile-picture",
-  profileUpload.single("file"),
-  async (req, res) => {
-    try {
-      const posts = await db.query(
-        "INSERT INTO posts (user_id, caption, link, time) values ($1, $2, $3, $4)",
-        [req.body.userId, req.body.caption, req.file.path, req.body.time]
-      );
-      res.status(201).json({
-        message: "Post uploaded sucessfully.",
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  }
-); */
-
 app.post(
   "/api/create-profile",
   authorize,
@@ -129,6 +111,73 @@ app.get("/api/check-profile", authorize, async (req, res) => {
     res.status(500).json({
       error: err.message,
     });
+  }
+});
+
+app.get("/api/profile-details/:username", authorize, async (req, res) => {
+  const username = req.params.username;
+  const userDetailsQuery = {
+    text: "SELECT * FROM users WHERE username = $1",
+    values: [username],
+  };
+  const userPostsQuery = {
+    text: "SELECT * FROM posts WHERE user_id = $1",
+    values: [username],
+  };
+  const followerCountQuery = {
+    text: "SELECT COUNT(*) FROM followers WHERE follower_username = $1",
+    values: [username],
+  };
+  const followingCountQuery = {
+    text: "SELECT COUNT(*) FROM followers WHERE following_username = $1",
+    values: [username],
+  };
+
+  try {
+    // Execute all queries concurrently
+    const results = await Promise.all([
+      db.query(userDetailsQuery),
+      db.query(userPostsQuery),
+      db.query(followerCountQuery),
+      db.query(followingCountQuery),
+    ]);
+
+    // Extract query results
+    const userDetails = results[0].rows[0]; // Assuming the user exists and has a unique ID
+    const userPosts = results[1].rows;
+    const followerCount = results[2].rows[0].count;
+    const followingCount = results[3].rows[0].count;
+
+    // Combine all results into one response object
+    res.json({
+      userDetails,
+      userPosts,
+      followerCount,
+      followingCount,
+    });
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.get("/api/timeline", authorize, async (req, res) => {
+  const username = req.user.id;
+
+  try {
+    const result = await db.query(
+      "SELECT posts.* FROM posts LEFT JOIN followers ON followers.following_username = posts.user_id AND followers.follower_username = $1 WHERE followers.follower_username = $1 OR posts.user_id = $1",
+      [username]
+    );
+    // Combine all results into one response object
+    res.status(200).json({
+      data: {
+        posts: result.rows,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
